@@ -8,4 +8,6 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view(), name='logout'),
     path('register/', views.register, name='register'),
     path('users/', views.users, name='users'),
+    path('makemaster/<int:id>', views.makemaster, name='makemaster'),
+    path('makeactive/<int:id>', views.makeactive, name='makeactive'),
 ]

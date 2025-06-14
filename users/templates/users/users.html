@@ -2,6 +2,52 @@
 
 {% block title %}
     <title>Login</title>
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #4cd964; /* iOS green */
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -22,6 +68,7 @@
             <th>Name</th>
             <th>Surname</th>
             <th>Is Master</th>
+            <th>Active</th>
         </tr>
     </thead>
     <tbody>
@@ -31,11 +78,22 @@
                 <td>{{ user.name }}</td>
                 <td>{{ user.surname }}</td>
                 <td>
-                    {% if user.is_master %}
-                        ✅
-                    {% else %}
-                        ❌
-                    {% endif %}
+                    <form action="{% url 'users:makemaster' user.id %}" method="get">
+                        <label class="switch">
+                            <input type="checkbox" id="wifiToggle" name="is-master" onchange="this.form.submit()"
+                                   {% if user.is_master %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+                    </form>
+                </td>
+                <td>
+                    <form action="{% url 'users:makeactive' user.id %}" method="get">
+                        <label class="switch">
+                            <input type="checkbox" id="wifiToggle" name="is-master" onchange="this.form.submit()"
+                                   {% if user.is_active %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+                    </form>
                 </td>
             </tr>
         {% empty %}
@@ -45,5 +103,6 @@
         {% endfor %}
     </tbody>
 </table>
+
 
 {% endblock %}

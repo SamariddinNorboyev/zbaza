@@ -49,6 +49,42 @@ h1{
     display: none;
 }
 
+@media (max-width: 768px) {
+    .table thead {
+        display: none;
+    }
+
+    .table, .table tbody, .table tr, .table td {
+        display: block;
+        width: 100%;
+    }
+
+    .table tr {
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        padding: 1rem;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+    .table td {
+        text-align: left;
+        padding: 0.5rem 0;
+        border: none;
+    }
+
+    .table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: inline-block;
+        width: 120px;
+    }
+
+    select, input, button {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+}
 
 </style>
 {% endblock %}
@@ -72,10 +108,10 @@ h1{
             <tbody>
             {% for product in products %}
                 <tr scope="row">
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ product.name }}</td>
-                    <td>{{ product.code }}</td>
-                    <td>{{ product.amount }}</td>
+                    <td data-label="N%">{{ forloop.counter }}</td>
+                    <td data-label="Ism">{{ product.name }}</td>
+                    <td data-label="Kodi">{{ product.code }}</td>
+                    <td data-label="Soni">{{ product.amount }}</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -100,33 +136,31 @@ h1{
             </tr>
             </thead>
             <tbody>
-                <tr scope="row">
-                    <td>
-                        1
-                    </td>
-                    <td>
-                        <select name="nameSelect" id="nameSelect">
-                            <option value="" disabled selected hidden>Tanlang...</option>
-                            {% for product in products %}
-                                <option value="{{ product.name }}">{{ product.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <select name="codeSelect" id="codeSelect">
-                            <option value="" disabled selected hidden>Tanlang...</option>
-                            {% for product in products %}
-                                <option value="{{ product.code }}">{{ product.code }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <input type="number" id="product-amount">
-                    </td>
-                    <td>
-                        <button class="btn btn-warning" onclick="open_approve()" >Ishlatdim</button>
-                    </td>
-                </tr>
+            <tr scope="row">
+                <td data-label="N%">1</td>
+                <td data-label="Ismini tanlang">
+                    <select name="nameSelect" id="nameSelect">
+                        <option value="" disabled selected hidden>Tanlang...</option>
+                        {% for product in products %}
+                            <option value="{{ product.name }}">{{ product.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td data-label="Kodni tanlang">
+                    <select name="codeSelect" id="codeSelect">
+                        <option value="" disabled selected hidden>Tanlang...</option>
+                        {% for product in products %}
+                            <option value="{{ product.code }}">{{ product.code }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td data-label="Soni">
+                    <input type="number" id="product-amount">
+                </td>
+                <td data-label="Amal">
+                    <button class="btn btn-warning" onclick="open_approve()">Ishlatdim</button>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>

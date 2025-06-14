@@ -6,7 +6,6 @@ from .forms import LoginForm
 from .models import MyUser
 
 
-
 class LoginView(View):
     def get(self, request):
         form = LoginForm()
@@ -43,7 +42,28 @@ def register(request):
         return redirect('users:users')
     return render(request, 'users/register.html',)
 
+
 def users(request):
-    userlar = MyUser.objects.filter(is_superuser=False)
-    print(userlar)
-    return render(request, 'users/users.html', {'userlar': userlar})
+    if request.user.is_superuser:
+        userlar = MyUser.objects.filter(is_superuser=False)
+        print(userlar)
+        return render(request, 'users/users.html', {'userlar': userlar})
+    return redirect('products:home')
+
+
+def makemaster(request, id):
+    if request.user.is_superuser:
+        user = MyUser.objects.get(id=id)
+        user.is_master = not user.is_master
+        user.save()
+        return redirect('users:users')
+    return redirect('products:home')
+
+
+def makeactive(request, id):
+    if request.user.is_superuser:
+        user = MyUser.objects.get(id=id)
+        user.is_active = not user.is_active
+        user.save()
+        return redirect('users:users')
+    return redirect('products:home')
