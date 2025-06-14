@@ -1,0 +1,206 @@
+{% extends 'products/base.html' %}
+
+{% block title %}
+    <title>Login</title>
+    <style>
+    .form-nav {
+        width: 90%;
+        margin: auto;
+    }
+    .approve form input{
+        display: none;
+    }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% if messages %}
+        <div class="mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h1 class="h3 mb-0">User Yarating</h1>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username kiriting:</label>
+                                <input type="text" class="form-control" id="username" name="username"
+                                       maxlength="255" placeholder="Username">
+                            </div>
+                            {#                            <div class="mb-3">#}
+                            {#                                <label for="password" class="form-label">Parol kiriting:</label>#}
+                            {#                                <input type="password" class="form-control" id="password" name="password"#}
+                            {#                                       maxlength="255">#}
+                            {#                            </div>#}
+                            <label for="password" class="form-label">Parol kiriting:</label>
+                            <div class="input-group mb-3">
+                                <input type="password" class="form-control" placeholder="Password" id="password">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Ism kiriting:</label>
+                                <input type="text" class="form-control" id="name" name="name" maxlength="255" placeholder="Name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="surname" class="form-label">Familiya kiriting:</label>
+                                <input type="text" class="form-control" id="surname" name="surname" maxlength="255" placeholder="Surname">
+                                <b class="surname"></b>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input type="checkbox" class="form-check-input" id="is_master" name="is_master">
+                                <label for="is_master" class="form-check-label">Master</label>
+                            </div>
+                            <div class="d-grid">
+                                <button type="button" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="approve">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-warning text-white text-center">
+                            <h1 class="h3 mb-0">Ma'lumotlar to'g'rimi?</h1>
+                        </div>
+                        <div class="card-body">
+                            <form action="{% url 'users:register' %}" method="post">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="" class="form-label">Username kiriting:</label>
+                                    <input type="text" class="form-control" id="username" name="username"
+                                           maxlength="255">
+                                    <b class="username"></b>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="" class="form-label">Parol kiriting:</label>
+                                    <input type="password" class="form-control" id="password" name="password"
+                                           maxlength="255">
+                                    <b class="password"></b>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="" class="form-label">Ism kiriting:</label>
+                                    <input type="text" class="form-control" id="name" name="name" maxlength="255">
+                                    <b class="name"></b>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="" class="form-label">Familiya kiriting:</label>
+                                    <input type="text" class="form-control" id="surname" name="surname"
+                                           maxlength="255">
+                                    <b class="surname"></b>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="checkbox" class="form-check-input" id="is_master" name="is_master">
+                                    <label for="" class="form-label">Master:</label>
+                                    <b class="is_master"></b>
+                                </div>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-secondary">Bekor qilish</button>
+                                    <button type="submit" class="btn btn-success">Tasdiqlash</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Select elements
+    const submitButton = document.querySelector('.btn.btn-primary');
+    const approveDiv = document.querySelector('.approve');
+    const mainForm = document.querySelector('.container.py-5');
+
+    // Input fields
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const nameInput = document.getElementById('name');
+    const surnameInput = document.getElementById('surname');
+    const isMasterInput = document.getElementById('is_master');
+
+    // Confirmation form fields
+    const confirmUsername = document.querySelector('.approve .username');
+    const confirmPassword = document.querySelector('.approve .password');
+    const confirmName = document.querySelector('.approve .name');
+    const confirmSurname = document.querySelector('.approve .surname');
+    const confirmIsMaster = document.querySelector('.approve .is_master');
+
+    // Hidden inputs in confirmation form (for actual submission)
+    const confirmUsernameInput = document.querySelector('.approve input[name="username"]');
+    const confirmPasswordInput = document.querySelector('.approve input[name="password"]');
+    const confirmNameInput = document.querySelector('.approve input[name="name"]');
+    const confirmSurnameInput = document.querySelector('.approve input[name="surname"]');
+    const confirmIsMasterInput = document.querySelector('.approve input[name="is_master"]');
+
+    // Hide approve block by default
+    approveDiv.style.display = 'none';
+
+    // Event listener
+    submitButton.addEventListener('click', function () {
+        // Simple form validation
+        if (
+            usernameInput.value.trim() === '' ||
+            passwordInput.value.trim() === '' ||
+            nameInput.value.trim() === '' ||
+            surnameInput.value.trim() === ''
+        ) {
+            alert("Iltimos, barcha maydonlarni to'ldiring!");
+            return;
+        }
+
+        // Fill confirmation fields
+        confirmUsername.textContent = usernameInput.value;
+        confirmPassword.textContent = passwordInput.value;
+        confirmName.textContent = nameInput.value;
+        confirmSurname.textContent = surnameInput.value;
+        confirmIsMaster.textContent = isMasterInput.checked ? 'Ha' : 'Yo‘q';
+
+        // Fill hidden form inputs to submit data
+        confirmUsernameInput.value = usernameInput.value;
+        confirmPasswordInput.value = passwordInput.value;
+        confirmNameInput.value = nameInput.value;
+        confirmSurnameInput.value = surnameInput.value;
+        confirmIsMasterInput.checked = isMasterInput.checked;
+
+        // Hide main form, show confirmation
+        mainForm.style.display = 'none';
+        approveDiv.style.display = 'block';
+    });
+
+    // Cancel button
+    document.querySelector('.btn.btn-secondary').addEventListener('click', function () {
+        approveDiv.style.display = 'none';
+        mainForm.style.display = 'block';
+    });
+
+    // Password toggle
+    const togglePassword = document.getElementById('togglePassword');
+    const pInput = document.getElementById('password');
+
+    togglePassword.addEventListener('click', function () {
+        const type = pInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        pInput.setAttribute('type', type);
+        this.textContent = type === 'password' ? '👁️' : '🙈';
+    });
+</script>
+
+
+{% endblock %}

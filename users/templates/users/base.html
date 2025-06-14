@@ -1,0 +1,38 @@
+{% load i18n %}
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    {% block title %}
+        <title>Base</title>
+    {% endblock %}
+    <style>
+        .background {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(16deg, rgba(236, 213, 255, 1) 0%, rgba(89, 227, 255, 1) 100%);
+        }
+        .center{
+            width: 40%;
+            border: 1px solid black;
+            background-color: white;
+            border-radius: 3vh;
+            padding: 3vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="center">
+            {% block body %}
+
+            {% endblock %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+</body>
+</html>

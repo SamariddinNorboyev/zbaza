@@ -1,0 +1,239 @@
+{% extends 'products/base.html' %}
+{% block title %}
+<title>List</title>
+<style>
+
+
+.table-nav{
+    width:100%;
+    display: flex;
+    justify-content: center;
+}
+.table{
+    width: 95%!important;
+}
+h1{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.blank{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #a6a6a6;
+    opacity: 70%;
+    z-index: 3;
+    display: none;
+}
+
+.approve{
+    width: 40%;
+    height: 30vh;
+    background-color: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    padding: 2vh;
+    display: none;
+}
+.approve input{
+    margin: 1vh;
+}
+.approve-block input{
+    display: none;
+}
+
+
+</style>
+{% endblock %}
+{% block body %}
+
+    {% if request.user.is_superuser or request.user.is_master %}
+    <br><br>
+    <h1>
+        Barcha productlar
+    </h1>
+    <div class="table-nav">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">N%</th>
+                    <th scope="col">Ism</th>
+                    <th scope="col">Kodi</th>
+                    <th scope="col">Soni</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+                <tr scope="row">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.code }}</td>
+                    <td>{{ product.amount }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+
+    <br>
+    <h1>
+        Kerakli maxsulotni kiriting
+    </h1>
+    <div class="table-nav">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">N%</th>
+                <th scope="col"><label for="nameSelect">Ismini tanlang</label></th>
+                <th scope="col"><label for="codeSelect">Kodni tanlang</label></th>
+                <th scope="col">Soni</th>
+                <th scope="col">Amal</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr scope="row">
+                    <td>
+                        1
+                    </td>
+                    <td>
+                        <select name="nameSelect" id="nameSelect">
+                            <option value="" disabled selected hidden>Tanlang...</option>
+                            {% for product in products %}
+                                <option value="{{ product.name }}">{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select name="codeSelect" id="codeSelect">
+                            <option value="" disabled selected hidden>Tanlang...</option>
+                            {% for product in products %}
+                                <option value="{{ product.code }}">{{ product.code }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" id="product-amount">
+                    </td>
+                    <td>
+                        <button class="btn btn-success" onclick="open_approve()" >Qabul Qildim</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="approve">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <h1>Mahsulotni tekshiring!</h1>
+            <br>
+            <div class="approve-block">
+                Ism:
+                <input type="text" id="sel-name" name="name">
+                <b id="sel-name-b"></b>
+            </div>
+            <div class="approve-block">
+                Kodi:
+                <input type="text" id="sel-code" name="code">
+                <b id="sel-code-b"></b>
+            </div>
+            <div class="approve-block">
+                Soni:
+                <input type="text" id="sel-amount" name="amount">
+                <b id="sel-amount-b"></b>
+            </div>
+            <br>
+
+            <input type="button" class="btn btn-secondary" value="Bekor qilish" onclick="close_approve()">
+            <input type="submit" class="btn btn-success" value="Tasqidlash">
+        </form>
+    </div>
+    <div class="blank" onclick="close_approve()"></div>
+
+    <script>
+
+        let typed_amount = document.getElementById('product-amount')
+
+        const sel_code = document.getElementById('sel-code-b')
+        const sel_name = document.getElementById('sel-name-b')
+        const sel_amount = document.getElementById('sel-amount-b')
+
+        const products = {{ data|safe }}
+
+        const codeSelect = document.getElementById('codeSelect');
+        const nameSelect = document.getElementById('nameSelect');
+
+        function updateSelect(selectedCode = null, selectedName = null) {
+            if (selectedCode) {
+                const product = products.find(p => p.code === selectedCode);
+                if (product) {
+                    nameSelect.value = product.name;
+                }
+            }
+
+            if (selectedName) {
+                const product = products.find(p => p.name === selectedName);
+                if (product) {
+                    codeSelect.value = product.code;
+                }
+            }
+        }
+
+        codeSelect.addEventListener('change', () => {
+            updateSelect(codeSelect.value, null);
+        });
+
+        nameSelect.addEventListener('change', () => {
+            updateSelect(null, nameSelect.value);
+        });
+
+        const approve = document.querySelector('.approve')
+        const blank = document.querySelector('.blank')
+
+
+        function open_approve(){
+            if (check_amount()===1){
+                approve.style.display = 'block'
+                blank.style.display = 'block'
+
+                sel_name.innerHTML = nameSelect.value;
+                sel_code.innerHTML = codeSelect.value;
+                sel_amount.innerHTML = typed_amount.value;
+
+                document.getElementById('sel-name').value = sel_name.innerHTML
+                document.getElementById('sel-code').value = sel_code.innerHTML
+                document.getElementById('sel-amount').value = sel_amount.innerHTML
+            }
+            else{
+                confirm("Soni yoki Kodi tanlanmagan!")
+            }
+        }
+
+        function close_approve(){
+            approve.style.display = 'none'
+            blank.style.display = 'none'
+        }
+
+
+        function check_amount(){
+            if(codeSelect.value === ''){
+                return 0
+            }
+            if (typed_amount.value === ''){
+                return 0
+            }
+            return 1
+        }
+
+
+    </script>
+{% endblock %}

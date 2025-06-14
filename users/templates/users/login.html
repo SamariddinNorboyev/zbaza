@@ -1,0 +1,18 @@
+{% extends 'users/base.html' %}
+
+{% block title %}
+    <title>Login</title>
+{% endblock %}
+
+{% block body %}
+    <form action="{% url 'users:login' %}" method="post">
+        <b><h1>Login</h1></b>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <br>
+        <input type="submit" class="btn btn-success" value="Login">
+{#        <a href="{% url 'users:register' %}" class="btn btn-primary">Register</a>#}
+{#        <a href="{% url 'users:google_login' %}" class="btn btn-warning">Google</a>#}
+{#        <a href="{% url 'users:reset_password' %}" class="btn btn-secondary">Reset Password</a>#}
+    </form>
+{% endblock %}
