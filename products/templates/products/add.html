@@ -128,7 +128,6 @@ h1{
         <table class="table">
             <thead>
             <tr>
-                <th scope="col">N%</th>
                 <th scope="col"><label for="nameSelect">Ismini tanlang</label></th>
                 <th scope="col"><label for="codeSelect">Kodni tanlang</label></th>
                 <th scope="col">Soni</th>
@@ -136,8 +135,19 @@ h1{
             </tr>
             </thead>
             <tbody>
+            <tr>
+                <td>
+                    <input type="text" id="searchName" placeholder="Ismni yozing..." class="form-control mb-3">
+                    <div class="products-name-result"></div>
+                </td>
+                <td>
+                    <input type="text" id="searchCode" placeholder="Kodini yozing..." class="form-control mb-3">
+                    <div class="products-code-result"></div>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
             <tr scope="row">
-                <td data-label="N%">1</td>
                 <td data-label="Ismini tanlang">
                     <select name="nameSelect" id="nameSelect">
                         <option value="" disabled selected hidden>Tanlang...</option>
@@ -194,80 +204,112 @@ h1{
     <div class="blank" onclick="close_approve()"></div>
 
     <script>
+        const pros = JSON.parse('{{ products_json|escapejs }}');
+        const products = {{ data|safe }};
 
-        let typed_amount = document.getElementById('product-amount')
+        const nameSelect = document.querySelector('#nameSelect');
+        const codeSelect = document.querySelector('#codeSelect');
+        const typedAmount = document.querySelector('#product-amount');
 
-        const sel_code = document.getElementById('sel-code-b')
-        const sel_name = document.getElementById('sel-name-b')
-        const sel_amount = document.getElementById('sel-amount-b')
+        const approve = document.querySelector('.approve');
+        const blank = document.querySelector('.blank');
+        const selName = document.querySelector('#sel-name');
+        const selCode = document.querySelector('#sel-code');
+        const selAmount = document.querySelector('#sel-amount');
+        const selNameB = document.querySelector('#sel-name-b');
+        const selCodeB = document.querySelector('#sel-code-b');
+        const selAmountB = document.querySelector('#sel-amount-b');
 
-        const products = {{ data|safe }}
+        // Search by Name
+        document.getElementById('searchName').addEventListener('input', function () {
+            const searchWord = this.value.toLowerCase().trim();
+            const resultDiv = document.querySelector('.products-name-result');
+            resultDiv.innerHTML = '';
 
-        const codeSelect = document.getElementById('codeSelect');
-        const nameSelect = document.getElementById('nameSelect');
+            if (!searchWord) return;
 
+            const filtered = pros.filter(product => product.name.toLowerCase().includes(searchWord));
+            if (filtered.length === 0) {
+                resultDiv.innerHTML = '<p class="text-muted">Hech narsa topilmadi.</p>';
+                return;
+            }
+
+            filtered.forEach(product => {
+                const btn = document.createElement('button');
+                btn.textContent = product.name;
+                btn.className = "btn btn-outline-primary m-1";
+                btn.onclick = () => updateSelect(null, product.name);
+                resultDiv.appendChild(btn);
+            });
+        });
+
+        // Search by Code
+        document.getElementById('searchCode').addEventListener('input', function () {
+            const searchWord = this.value.toLowerCase().trim();
+            const resultDiv = document.querySelector('.products-code-result');
+            resultDiv.innerHTML = '';
+
+            if (!searchWord) return;
+
+            const filtered = pros.filter(product => product.code.toLowerCase().includes(searchWord));
+            if (filtered.length === 0) {
+                resultDiv.innerHTML = '<p class="text-muted">Hech narsa topilmadi.</p>';
+                return;
+            }
+
+            filtered.forEach(product => {
+                const btn = document.createElement('button');
+                btn.textContent = product.code;
+                btn.className = "btn btn-outline-primary m-1";
+                btn.onclick = () => updateSelect(product.code, null);
+                resultDiv.appendChild(btn);
+            });
+        });
+
+        // Sync select logic
         function updateSelect(selectedCode = null, selectedName = null) {
+            let product = null;
+
             if (selectedCode) {
-                const product = products.find(p => p.code === selectedCode);
-                if (product) {
-                    nameSelect.value = product.name;
-                }
+                product = products.find(p => p.code === selectedCode);
+            } else if (selectedName) {
+                product = products.find(p => p.name === selectedName);
             }
 
-            if (selectedName) {
-                const product = products.find(p => p.name === selectedName);
-                if (product) {
-                    codeSelect.value = product.code;
-                }
+            if (product) {
+                nameSelect.value = product.name;
+                codeSelect.value = product.code;
             }
         }
 
-        codeSelect.addEventListener('change', () => {
-            updateSelect(codeSelect.value, null);
-        });
-
-        nameSelect.addEventListener('change', () => {
-            updateSelect(null, nameSelect.value);
-        });
-
-        const approve = document.querySelector('.approve')
-        const blank = document.querySelector('.blank')
-
-
-        function open_approve(){
-            if (check_amount()===1){
-                approve.style.display = 'block'
-                blank.style.display = 'block'
-
-                sel_name.innerHTML = nameSelect.value;
-                sel_code.innerHTML = codeSelect.value;
-                sel_amount.innerHTML = typed_amount.value;
-
-                document.getElementById('sel-name').value = sel_name.innerHTML
-                document.getElementById('sel-code').value = sel_code.innerHTML
-                document.getElementById('sel-amount').value = sel_amount.innerHTML
+        // Approve logic
+        function open_approve() {
+            if (!check_amount()) {
+                confirm("Soni yoki Kodi tanlanmagan!");
+                return;
             }
-            else{
-                confirm("Soni yoki Kodi tanlanmagan!")
-            }
+            approve.style.display = 'block';
+            blank.style.display = 'block';
+
+            selNameB.textContent = nameSelect.value;
+            selCodeB.textContent = codeSelect.value;
+            selAmountB.textContent = typedAmount.value;
+
+            selName.value = nameSelect.value;
+            selCode.value = codeSelect.value;
+            selAmount.value = typedAmount.value;
         }
 
-        function close_approve(){
-            approve.style.display = 'none'
-            blank.style.display = 'none'
+        function close_approve() {
+            approve.style.display = 'none';
+            blank.style.display = 'none';
         }
 
-
-        function check_amount(){
-            if(codeSelect.value === ''){
-                return 0
-            }
-            if (typed_amount.value === ''){
-                return 0
-            }
-            return 1
+        function check_amount() {
+            return codeSelect.value !== '' && typedAmount.value !== '';
         }
 
-
+        codeSelect.addEventListener('change', () => updateSelect(codeSelect.value, null));
+        nameSelect.addEventListener('change', () => updateSelect(null, nameSelect.value));
     </script>
 {% endblock %}

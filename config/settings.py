@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     'users',
     'products',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [

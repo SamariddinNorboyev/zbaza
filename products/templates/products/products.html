@@ -1,92 +1,96 @@
 {% extends 'products/base.html' %}
+{% load humanize %}
 {% block title %}
 <title>List</title>
-<style>
+    <style>
+
+        .table-nav {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .table {
+            width: 95% !important;
+        }
+
+        h1 {
+            width: 100%;
+            text-align: center;
+        }
+
+        .blank {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #a6a6a6;
+            opacity: 70%;
+            z-index: 3;
+            display: none;
+        }
+
+        .approve {
+            width: 40%;
+            background-color: white;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            padding: 2vh;
+            display: none;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .approve input {
+            margin: 1vh;
+        }
+
+        .approve-block input {
+            display: none;
+        }
 
 
-.table-nav{
-    width:100%;
-    display: flex;
-    justify-content: center;
-}
-.table{
-    width: 95%!important;
-}
-h1{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
+        @media (max-width: 768px) {
+            .table thead {
+                display: none;
+            }
 
-.blank{
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: #a6a6a6;
-    opacity: 70%;
-    z-index: 3;
-    display: none;
-}
+            .table, .table tbody, .table tr, .table td {
+                display: block;
+                width: 100%;
+            }
 
-.approve{
-    width: 40%;
-    height: 30vh;
-    background-color: white;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 5;
-    padding: 2vh;
-    display: none;
-}
-.approve input{
-    margin: 1vh;
-}
-.approve-block input{
-    display: none;
-}
+            .table tr {
+                margin-bottom: 1rem;
+                border: 1px solid #ddd;
+                padding: 1rem;
+                border-radius: 8px;
+                background-color: #f9f9f9;
+            }
 
-@media (max-width: 768px) {
-    .table thead {
-        display: none;
-    }
+            .table td {
+                text-align: left;
+                padding: 0.5rem 0;
+                border: none;
+            }
 
-    .table, .table tbody, .table tr, .table td {
-        display: block;
-        width: 100%;
-    }
+            .table td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                display: inline-block;
+                width: 120px;
+            }
 
-    .table tr {
-        margin-bottom: 1rem;
-        border: 1px solid #ddd;
-        padding: 1rem;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-    }
-
-    .table td {
-        text-align: left;
-        padding: 0.5rem 0;
-        border: none;
-    }
-
-    .table td::before {
-        content: attr(data-label);
-        font-weight: bold;
-        display: inline-block;
-        width: 120px;
-    }
-
-    select, input, button {
-        width: 100%;
-        margin-top: 0.5rem;
-    }
-}
-
-</style>
+            select, input, button {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
 {% endblock %}
 {% block body %}
 
@@ -118,28 +122,49 @@ h1{
 <h1 class="text-center my-4">Barcha Productlar</h1>
 
 <div class="table-responsive px-3">
-    <table class="table table-bordered table-hover align-middle text-center">
+    <table class="table table-bordered table-hover align-middle text-center" id="tableID">
         <thead class="table-dark">
             <tr>
                 <th scope="col">N%</th>
                 <th scope="col">Ism</th>
                 <th scope="col">Kodi</th>
                 <th scope="col">Soni</th>
+                <th scope="col">Donasiga narxi</th>
+                <th scope="col">Umumiy narxi</th>
                 <th scope="col">Amal</th>
             </tr>
         </thead>
         <tbody>
+            <tr>
+                <td></td>
+                <td data-label="Ism">
+                    <input type="text" id="searchName" placeholder="Ismni yozing..." class="form-control mb-3">
+                    <div class="products-name-result"></div>
+                </td>
+                <td data-label="Kodi">
+                    <input type="text" id="searchCode" placeholder="Kodini yozing..." class="form-control mb-3">
+                    <div class="products-code-result"></div>
+                </td>
+                <td></td>
+                <td></td>
+                <td>{{ total_price }}</td>
+                <td>
+                    <a class="btn btn-success" href="{% url 'products:export_excel' %}">Download Excel</a>
+                </td>
+            </tr>
             {% for product in page_obj %}
             <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.code }}</td>
-                <td>{{ product.amount }}</td>
-                <td>
-                    <a class="btn btn-sm btn-outline-warning me-1" href="{% url 'products:edit' product.id %}">
+                <td data-label="N%">{{ forloop.counter }}</td>
+                <td data-label="Ism">{{ product.name }}</td>
+                <td data-label="Kodi">{{ product.code }}</td>
+                <td data-label="Soni">{{ product.amount }}</td>
+                <td data-label="Umumiy narxi">{{ product.price|intcomma }}</td>
+                <td data-label="Donasiga narxi">{{ product.total_price|intcomma }}</td>
+                <td data-label="Amal">
+                    <a class="btn btn-sm btn-warning me-1" href="{% url 'products:edit' product.id %}">
                         ✏️ Tahrirlash
                     </a>
-                    <a href="{% url 'products:delete' product.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Ishonchingiz komilmi?');">
+                    <a href="{% url 'products:delete' product.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Ishonchingiz komilmi?');">
                         🗑️ O‘chirish
                     </a>
                 </td>
@@ -203,6 +228,7 @@ h1{
                 <th scope="col"><label for="nameSelect">Ismini tanlang</label></th>
                 <th scope="col"><label for="codeSelect">Kodni tanlang</label></th>
                 <th scope="col">Soni</th>
+                <th scope="col">Narxi</th>
                 <th scope="col">Amal</th>
             </tr>
             </thead>
@@ -217,6 +243,9 @@ h1{
                 <td data-label="Soni">
                     <input type="number" id="product-amount" placeholder="Soni" name="amount">
                 </td>
+                <td data-label="Narxi">
+                    <input type="number" id="product-price" placeholder="Narxi" name="price">
+                </td>
                 <td data-label="Amal">
                     <button class="btn btn-primary" onclick="open_approve()">Yaratish</button>
                 </td>
@@ -224,6 +253,7 @@ h1{
             </tbody>
         </table>
     </div>
+
 
     <div class="approve">
         <form action="" method="POST" id="approve_form">
@@ -245,6 +275,11 @@ h1{
                 <input type="text" id="sel-amount" name="amount">
                 <b id="sel-amount-b"></b>
             </div>
+            <div class="approve-block">
+                Narxi:
+                <input type="text" id="sel-price" name="price">
+                <b id="sel-price-b"></b>
+            </div>
             <br>
 
             <input type="button" class="btn btn-secondary" value="Bekor qilish" onclick="close_approve()">
@@ -253,15 +288,16 @@ h1{
     </div>
     <div class="blank" onclick="close_approve()"></div>
 
-
-
     <script>
+        const pros = JSON.parse('{{ products_json|escapejs }}');
 
         let typed_amount = document.getElementById('product-amount')
+        let typed_price = document.getElementById('product-price')
 
         const sel_code = document.getElementById('sel-code-b')
         const sel_name = document.getElementById('sel-name-b')
         const sel_amount = document.getElementById('sel-amount-b')
+        const sel_price = document.getElementById('sel-price-b')
 
         const products = {{ data|safe }}
 
@@ -270,6 +306,59 @@ h1{
 
         const approve = document.querySelector('.approve')
         const blank = document.querySelector('.blank')
+        console.log(pros)
+
+
+
+
+        document.getElementById('searchName').addEventListener('input', function () {
+            const searchWord = this.value.toLowerCase().trim();
+            const resultDiv = document.querySelector('.products-name-result');
+            resultDiv.innerHTML = '';
+
+            if (!searchWord) return;
+
+            const filtered = pros.filter(product => product.name.toLowerCase().includes(searchWord));
+            if (filtered.length === 0) {
+                resultDiv.innerHTML = '<p class="text-muted">Hech narsa topilmadi.</p>';
+                return;
+            }
+
+            filtered.forEach(product => {
+                const btn = document.createElement('button');
+                btn.textContent = product.name;
+                btn.className = "btn btn-outline-primary m-1";
+                btn.onclick = () => redirectToEdit(product.id);
+                resultDiv.appendChild(btn);
+            });
+        });
+
+        // Search by Code
+        document.getElementById('searchCode').addEventListener('input', function () {
+            const searchWord = this.value.toLowerCase().trim();
+            const resultDiv = document.querySelector('.products-code-result');
+            resultDiv.innerHTML = '';
+
+            if (!searchWord) return;
+
+            const filtered = pros.filter(product => product.code.toLowerCase().includes(searchWord));
+            if (filtered.length === 0) {
+                resultDiv.innerHTML = '<p class="text-muted">Hech narsa topilmadi.</p>';
+                return;
+            }
+
+            filtered.forEach(product => {
+                const btn = document.createElement('button');
+                btn.textContent = product.code;
+                btn.className = "btn btn-outline-primary m-1";
+                btn.onclick = () => redirectToEdit(product.id);
+                resultDiv.appendChild(btn);
+            });
+        });
+
+        function redirectToEdit(productId) {
+            window.location.href = `/edit/${productId}/`;
+        }
 
         function open_approve(){
             if (check_amount()===1){
@@ -279,10 +368,12 @@ h1{
                 sel_name.innerHTML = nameSelect.value;
                 sel_code.innerHTML = codeSelect.value;
                 sel_amount.innerHTML = typed_amount.value;
+                sel_price.innerHTML = typed_price.value;
 
                 document.getElementById('sel-name').value = sel_name.innerHTML
                 document.getElementById('sel-code').value = sel_code.innerHTML
                 document.getElementById('sel-amount').value = sel_amount.innerHTML
+                document.getElementById('sel-price').value = sel_price.innerHTML
             }
             else{
                 confirm("Soni yoki Kodi tanlanmagan!")

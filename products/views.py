@@ -1,12 +1,13 @@
 import json
-
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
-
+import openpyxl
+from io import BytesIO
 from products.forms import ProductForm
 from products.models import Product
 from django.contrib import messages
+from django.http import HttpResponse
 
 
 @login_required
@@ -39,7 +40,7 @@ def add(request):
         return redirect('products:add')
     products = Product.objects.all()
     products_data = list(products.values('code', 'name'))
-    return render(request, 'products/add.html', {'products' :products, 'data': products_data})
+    return render(request, 'products/add.html', {'products' :products, 'data': products_data, 'products_json': json.dumps(products_data)})
 
 
 
@@ -50,22 +51,28 @@ def products(request):
             name = request.POST.get('name')
             code = request.POST.get('code')
             amount = int(request.POST.get('amount'))
+            price = request.POST.get('price')
             if Product.objects.filter(code=code).exists():
                 messages.error(request, "Bu kod band! Iltimos boshqa kod tanlang.")
                 return redirect('products:products')
-            Product.objects.create(name=name, code=code, amount=amount)
+            Product.objects.create(name=name, code=code, amount=amount, price=price)
 
         product_list = Product.objects.all().order_by('-id')  # full list
         paginator = Paginator(product_list, 10)  # paginate it
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-
-        products_data = list(product_list.values('code', 'name'))
+        total_price = 0
+        for i in page_obj:
+            total_price += i.total_price
+        total_price = "{:,}".format(total_price).replace(",", " ")
+        products_data = list(product_list.values('id', 'code', 'name'))
 
         return render(request, 'products/products.html', {
             'products': product_list,
             'page_obj': page_obj,
-            'data': products_data
+            'data': products_data,
+            'products_json': json.dumps(products_data),
+            'total_price': total_price
         })
 
     return redirect('products:home')
@@ -102,4 +109,38 @@ def edit(request, id):
     else:
         form = ProductForm(instance=product)
 
-    return render(request, 'products/edit.html', {'form': form})
+    return render(request, 'products/edit.html', {'form': form, 'id': id})
+
+
+
+
+@login_required
+def export_products_excel(request):
+    if request.user.is_superuser:
+        products = Product.objects.all()
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Products"
+
+        # Add header
+        ws.append(['ID', 'Name', 'Code', 'Amount', 'Total Price'])
+
+        # Add data rows
+        for product in products:
+            ws.append([product.id, product.name, product.code, product.amount, product.total_price])
+
+        # Save to BytesIO buffer
+        buffer = BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+
+        # Return response
+        response = HttpResponse(
+            buffer,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = 'attachment; filename=products.xlsx'
+        return response
+
+    return redirect('products:home')

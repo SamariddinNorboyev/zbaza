@@ -2,7 +2,6 @@
 {% block title %}
     <title>List</title>
     <style>
-
         .table-nav {
             width: 100%;
             display: flex;
@@ -109,10 +108,10 @@
                 <tbody>
                 {% for product in products %}
                     <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ product.name }}</td>
-                        <td>{{ product.code }}</td>
-                        <td>{{ product.amount }}</td>
+                        <td data-label="N%">{{ forloop.counter }}</td>
+                        <td data-label="Ism">{{ product.name }}</td>
+                        <td data-label="Kodi">{{ product.code }}</td>
+                        <td data-label="Soni">{{ product.amount }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -134,11 +133,11 @@
             </thead>
             <tbody>
             <tr>
-                <td>
+                <td data-label="Ism bo'yicha qidiring">
                     <input type="text" id="searchName" placeholder="Ismni yozing..." class="form-control mb-3">
                     <div class="products-name-result"></div>
                 </td>
-                <td>
+                <td data-label="Kod bo'yicha qidiring">
                     <input type="text" id="searchCode" placeholder="Kodini yozing..." class="form-control mb-3">
                     <div class="products-code-result"></div>
                 </td>
@@ -146,7 +145,7 @@
                 <td></td>
             </tr>
             <tr>
-                <td>
+                <td data-label="Ismini tanlang">
                     <select id="nameSelect">
                         <option value="" disabled selected hidden>Tanlang...</option>
                         {% for product in products %}
@@ -154,7 +153,7 @@
                         {% endfor %}
                     </select>
                 </td>
-                <td>
+                <td data-label="Kodni tanlang">
                     <select id="codeSelect">
                         <option value="" disabled selected hidden>Tanlang...</option>
                         {% for product in products %}
@@ -162,8 +161,8 @@
                         {% endfor %}
                     </select>
                 </td>
-                <td><input type="number" id="product-amount"></td>
-                <td>
+                <td data-label="Soni"><input type="number" id="product-amount"></td>
+                <td data-label="Amal">
                     <button class="btn btn-warning" onclick="open_approve()">Ishlatdim</button>
                 </td>
             </tr>
@@ -258,13 +257,11 @@
         // Sync select logic
         function updateSelect(selectedCode = null, selectedName = null) {
             let product = null;
-
             if (selectedCode) {
                 product = products.find(p => p.code === selectedCode);
             } else if (selectedName) {
                 product = products.find(p => p.name === selectedName);
             }
-
             if (product) {
                 nameSelect.value = product.name;
                 codeSelect.value = product.code;

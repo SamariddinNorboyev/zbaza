@@ -7,8 +7,9 @@
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Saqlash</button>
-        <a href="{% url 'products:products' %}" class="btn btn-secondary">Orqaga</a>
+        <button type="submit" class="btn btn-success">💾 Saqlash</button>
+        <a href="{% url 'products:delete' id %}" class="btn btn-danger" onclick="return confirm('Ishonchingiz komilmi?');">🗑️ O‘chirish</a>
+        <a href="{% url 'products:products' %}" class="btn btn-secondary">⬅️ Orqaga</a>
     </form>
 </div>
 
