@@ -122,7 +122,56 @@ h1{
 
     <br>
     <h1>
-        Kerakli maxsulotni kiriting
+        Maxsulotni TANLANG
+    </h1>
+    <div class="table-nav">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">N%</th>
+                <th scope="col"><label for="nameSelect">Ismini tanlang</label></th>
+                <th scope="col"><label for="codeSelect">Kodni tanlang</label></th>
+                <th scope="col">Soni</th>
+                <th scope="col">Amal</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr scope="row">
+                <td data-label="N%">1</td>
+                <td data-label="Ismini tanlang">
+                    <select name="nameSelect" id="nameSelect">
+                        <option value="" disabled selected hidden>Tanlang...</option>
+                        {% for product in products %}
+                            <option value="{{ product.name }}">{{ product.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td data-label="Kodni tanlang">
+                    <select name="codeSelect" id="codeSelect">
+                        <option value="" disabled selected hidden>Tanlang...</option>
+                        {% for product in products %}
+                            <option value="{{ product.code }}">{{ product.code }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td data-label="Soni">
+                    <input type="number" id="product-amount">
+                </td>
+                <td data-label="Amal">
+                    <button class="btn btn-warning" onclick="open_approve()">Ishlatdim</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+
+
+
+    <br>
+    <h1>
+        Maxsulotni QIDIRING
     </h1>
     <div class="table-nav">
         <table class="table">
@@ -193,7 +242,47 @@ h1{
     </div>
     <div class="blank" onclick="close_approve()"></div>
 
+
+
+
+    <input type="text" id="searchName" placeholder="Ismni yozing..." oninput="searchByNameChanger()" class="form-control mb-3">
+    <div class="products-all"></div>
+
     <script>
+        let products = JSON.parse('{{ products_json|escapejs }}');
+        const searchResult = document.querySelector('.products-all');
+
+        function searchByNameChanger() {
+            const searching_word = document.getElementById('searchName').value.toLowerCase().trim();
+
+            let filtered = searching_word === ''
+                ? ''
+                : products.filter(product =>
+                    product.name.toLowerCase().includes(searching_word)
+                );
+            searchResult.innerHTML = '';
+
+            if (filtered.length === 0) {
+                const noResult = document.createElement('p');
+                noResult.textContent = "Hech narsa topilmadi.";
+                noResult.className = "text-muted";
+                searchResult.appendChild(noResult);
+            } else {
+                filtered.forEach(product => {
+                    const btn = document.createElement('button');
+                    btn.textContent = product.name;
+                    btn.className = "btn btn-outline-primary m-1";
+                    btn.id = product.name
+                    btn.onclick = updateSelect(null, nameSelect.value);
+                    searchResult.appendChild(btn);
+                });
+            }
+
+            console.clear();
+            console.log("Filtered products:");
+            filtered.forEach(product => console.log(product.name));
+        }
+
 
         let typed_amount = document.getElementById('product-amount')
 
@@ -201,7 +290,7 @@ h1{
         const sel_name = document.getElementById('sel-name-b')
         const sel_amount = document.getElementById('sel-amount-b')
 
-        const products = {{ data|safe }}
+        products = {{ data|safe }}
 
         const codeSelect = document.getElementById('codeSelect');
         const nameSelect = document.getElementById('nameSelect');
@@ -268,6 +357,15 @@ h1{
             return 1
         }
 
+        document.getElementById('tableSearch').addEventListener('keyup', function () {
+            const input = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#productTable tbody tr');
+
+            rows.forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                row.style.display = rowText.includes(input) ? '' : 'none';
+            });
+        })
 
     </script>
 {% endblock %}
