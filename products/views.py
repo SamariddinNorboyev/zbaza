@@ -63,13 +63,27 @@ def products(request):
                 return redirect('products:products')
             Product.objects.create(name=name, code=code, amount=amount, price=price)
 
-        product_list = Product.objects.all().order_by('-id')  # full list
-        paginator = Paginator(product_list, 10)  # paginate it
+        sort_by = request.GET.get('sort', '-updated_at')
+
+        allowed_sort_fields = [
+            'id', '-id',
+            'name', '-name',
+            'code', '-code',
+            'price', '-price',
+            'amount', '-amount',
+            'updated_at', '-updated_at'
+        ]
+
+        if sort_by not in allowed_sort_fields:
+            sort_by = '-updated_at'
+
+        product_list = Product.objects.all().order_by(sort_by)
+
+        paginator = Paginator(product_list, 10)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        total_price = 0
-        for i in page_obj:
-            total_price += i.total_price
+
+        total_price = sum(i.total_price for i in page_obj)
         total_price = "{:,}".format(total_price).replace(",", " ")
         products_data = list(product_list.values('id', 'code', 'name'))
 
@@ -78,7 +92,8 @@ def products(request):
             'page_obj': page_obj,
             'data': products_data,
             'products_json': json.dumps(products_data),
-            'total_price': total_price
+            'total_price': total_price,
+            'current_sort': sort_by
         })
 
     return redirect('products:home')
