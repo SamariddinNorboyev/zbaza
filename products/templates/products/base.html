@@ -58,7 +58,7 @@
         position: relative;
         width: 100%;
         height: 12vh; /* reduced from 30vh */
-        background: url("{% static 'images/back.png' %}") no-repeat center center;
+        background: url("{% static 'images/back.webp' %}") no-repeat center center;
         background-size: cover;
         display: flex;
         align-items: center;
@@ -66,7 +66,6 @@
         overflow: hidden;
     }
     .center-rasm {
-        margin-top: 1vh;
         z-index: 2;
         width: 35%;
         position: relative;
@@ -95,7 +94,7 @@
         <a href="{% url 'users:logout' %}" class="header_left">{% trans "Tizimdan chiqish" %}</a>
     </header>
     <div class="rasm">
-        <img src="{% static 'images/center1.png' %}" class="center-rasm" alt="">
+        <img src="{% static 'images/center.webp' %}" class="center-rasm" alt="">
     </div>
     <br>
     <br>
