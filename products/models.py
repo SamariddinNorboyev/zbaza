@@ -5,6 +5,7 @@ class Product(models.Model):
     code = models.CharField(max_length=255, unique=True)
     amount = models.IntegerField()
     price = models.IntegerField(default=1000)
+    updated_at = models.DateTimeField(auto_now=True)
 
     @property
     def total_price(self):

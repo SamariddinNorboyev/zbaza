@@ -145,8 +145,24 @@
                     <input type="text" id="searchCode" placeholder="Kodini yozing..." class="form-control mb-3">
                     <div class="products-code-result"></div>
                 </td>
-                <td></td>
-                <td></td>
+                <td>
+                    {% if current_sort == 'price' %}
+                        <a href="?sort=-price">Price ↓</a>
+                    {% elif current_sort == '-price' %}
+                        <a href="?sort=price">Price ↑</a>
+                    {% else %}
+                        <a href="?sort=price">Price ↑</a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if current_sort == 'amount' %}
+                        <a href="?sort=-amount">Amount ↓</a>
+                    {% elif current_sort == '-amount' %}
+                        <a href="?sort=amount">Amount ↑</a>
+                    {% else %}
+                        <a href="?sort=amount">Amount ↑</a>
+                    {% endif %}
+                </td>
                 <td>{{ total_price }}</td>
                 <td>
                     <a class="btn btn-success" href="{% url 'products:export_excel' %}">Download Excel</a>
