@@ -1,11 +1,13 @@
 import json
+from argparse import Action
+
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 import openpyxl
 from io import BytesIO
 from products.forms import ProductForm
-from products.models import Product
+from products.models import Product, Actions
 from django.contrib import messages
 from django.http import HttpResponse
 
@@ -18,6 +20,8 @@ def home(request):
         amount = int(request.POST.get('amount'))
         product = Product.objects.filter(name=name, code=code).first()
         product.amount = product.amount - amount
+        action = Actions(by_user=request.user, product=product, amount=amount)
+        action.save()
         product.save()
         print(product)
         return redirect('products:home')
@@ -35,6 +39,8 @@ def add(request):
         amount = int(request.POST.get('amount'))
         product = Product.objects.filter(name=name, code=code).first()
         product.amount = product.amount + amount
+        action = Actions(by_user=request.user, product=product, amount=amount)
+        action.save()
         product.save()
         print(product)
         return redirect('products:add')
