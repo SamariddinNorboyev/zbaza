@@ -22,12 +22,10 @@
         width: 100%;
         display: flex;
         align-items: center;
-        {#background-color: rgb(77, 77, 77);#}
-        {#background-color: #22211d;#}
-        {#background: linear-gradient(to right, rgb(77,77,77) 0%, #22211d 50%, rgb(77,77,77) 100%);#}
         background: url("{% static 'images/back.webp' %}") no-repeat center center;
-        background-size: cover;
-        {#background: linear-gradient(to right, #5b5b5b 0%, #1e1d1a 50%, #5b5b5b 100%);#}
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+        background-position: center top;
         flex-wrap: wrap;
         padding: 0.5vh;
     }
@@ -61,30 +59,30 @@
     @media (max-width: 768px) {
         .header {
             display: grid;
+            background: url("{% static 'images/back.webp' %}") no-repeat left center;
+            background-size: auto 100%; /* Height 100%, width adjusts */
+            background-position: left center; /* Ensures it starts from the left */
+            background-repeat: no-repeat;
+            min-height: 200px; /* Optional: ensures there's room for the image */
         }
         .header_left {
             padding: 0.5vh;
             margin: 0.5vh;
-            font-size: 1.5vh;
+            font-size: 3vh;
         }
-        .center-rasm {
-            height: 100%;
-            width: auto !important;
+        .rasm{
+            height: 5vh;
         }
     }
 
     .rasm {
         position: relative;
         width: 100%;
-        height: 12vh;
-        {#background: url("{% static 'images/back.webp' %}") no-repeat center center;#}
-        {#background-size: cover;#}
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
     }
-
     .center-rasm {
         z-index: 2;
         width: 35%;
@@ -109,7 +107,7 @@
             <a href="{% url 'users:logout' %}" class="header_left">{% trans "Tizimdan chiqish" %}</a>
         </div>
         <div class="rasm">
-            <img src="{% static 'images/center.webp' %}" class="center-rasm" alt="">
+            <img src="{% static 'images/center.png' %}" class="center-rasm" alt="">
         </div>
     </header>
 

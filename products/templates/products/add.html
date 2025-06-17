@@ -1,6 +1,6 @@
 {% extends 'products/base.html' %}
 {% block title %}
-    <title>List</title>
+    <title>Kirim</title>
     <style>
 
         .table-nav {
@@ -8,8 +8,10 @@
             display: flex;
             justify-content: center;
         }
-
         .table {
+            width: 95% !important;
+        }
+        .table1 {
             width: 95% !important;
         }
 
@@ -33,7 +35,7 @@
 
         .approve {
             width: 40%;
-            height: 30vh;
+            height: 35vh;
             background-color: white;
             position: absolute;
             left: 50%;
@@ -43,17 +45,16 @@
             padding: 2vh;
             display: none;
         }
-
-        .approve input {
-            margin: 1vh;
-        }
-
         .approve-block input {
             display: none;
         }
 
 
         @media (max-width: 768px) {
+            .approve{
+                width: 70%;
+                height: 40vh;
+            }
             .table thead {
                 display: none;
             }
@@ -99,7 +100,7 @@
             Barcha productlar
         </h1>
         <div class="table-nav">
-            <table class="table">
+            <table class="table1">
                 <thead>
                 <tr>
                     <th scope="col">N%</th>
@@ -211,7 +212,7 @@
                     </select>
                 </td>
                 <td data-label="Soni">
-                    <input type="number" id="product-amount">
+                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="product-amount">
                 </td>
                 <td data-label="Amal">
                     <button class="btn btn-success" onclick="open_approve()">Qabul Qildim</button>
@@ -238,7 +239,7 @@
             </div>
             <div class="approve-block">
                 Soni:
-                <input type="text" id="sel-amount" name="amount">
+                <input type="tel" id="sel-amount" name="amount" inputmode="numeric" pattern="[0-9]*">
                 <b id="sel-amount-b"></b>
             </div>
             <br>

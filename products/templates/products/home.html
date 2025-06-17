@@ -1,6 +1,6 @@
 {% extends 'products/base.html' %}
 {% block title %}
-    <title>List</title>
+    <title>Chiqim</title>
     <style>
         .table-nav {
             width: 100%;
@@ -9,6 +9,9 @@
         }
 
         .table {
+            width: 95% !important;
+        }
+        .table1 {
             width: 95% !important;
         }
 
@@ -48,6 +51,7 @@
         @media (max-width: 768px) {
             .approve{
                 width: 70%;
+                height: 40vh;
             }
             .table thead {
                 display: none;
@@ -118,7 +122,7 @@
         <h1>Chiqim</h1>
         <h1>Barcha productlar</h1>
         <div class="table-nav">
-            <table class="table">
+            <table class="table1">
                 <thead>
                 <tr>
                     <th>N%</th>
@@ -223,7 +227,7 @@
                         {% endfor %}
                     </select>
                 </td>
-                <td data-label="Soni"><input type="number" id="product-amount"></td>
+                <td data-label="Soni"><input type="tel" inputmode="numeric" pattern="[0-9]*" id="product-amount"></td>
                 <td data-label="Amal">
                     <button class="btn btn-warning" onclick="open_approve()">Ishlatdim</button>
                 </td>
@@ -243,7 +247,7 @@
                 Kodi: <input type="text" id="sel-code" name="code"><b id="sel-code-b"></b>
             </div>
             <div class="approve-block">
-                Soni: <input type="text" id="sel-amount" name="amount"><b id="sel-amount-b"></b>
+                Soni: <input type="tel" id="sel-amount" name="amount" inputmode="numeric" pattern="[0-9]*"><b id="sel-amount-b"></b>
             </div>
             <br>
             <input type="button" class="btn btn-secondary" value="Bekor qilish" onclick="close_approve()">
@@ -373,7 +377,6 @@
 
         codeSelect.addEventListener('change', () => updateSelect(codeSelect.value, null));
         nameSelect.addEventListener('change', () => updateSelect(null, nameSelect.value));
-
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

@@ -1,7 +1,7 @@
 {% extends 'products/base.html' %}
 {% load humanize %}
 {% block title %}
-<title>List</title>
+<title>Tovarlar</title>
     <style>
 
         .table-nav {
@@ -145,21 +145,21 @@
                     <div class="products-code-result"></div>
                 </td>
                 <td>
-                    {% if current_sort == 'price' %}
-                        <a href="?sort=-price">Price ↓</a>
-                    {% elif current_sort == '-price' %}
-                        <a href="?sort=price">Price ↑</a>
+                    {% if current_sort == 'amount' %}
+                        <a href="?sort=-amount">SON ↓</a>
+                    {% elif current_sort == '-amount' %}
+                        <a href="?sort=amount">SON ↑</a>
                     {% else %}
-                        <a href="?sort=price">Price ↑</a>
+                        <a href="?sort=amount">SON ↑</a>
                     {% endif %}
                 </td>
                 <td>
-                    {% if current_sort == 'amount' %}
-                        <a href="?sort=-amount">Amount ↓</a>
-                    {% elif current_sort == '-amount' %}
-                        <a href="?sort=amount">Amount ↑</a>
+                    {% if current_sort == 'price' %}
+                        <a href="?sort=-price">NARX ↓</a>
+                    {% elif current_sort == '-price' %}
+                        <a href="?sort=price">NARX ↑</a>
                     {% else %}
-                        <a href="?sort=amount">Amount ↑</a>
+                        <a href="?sort=price">NARX ↑</a>
                     {% endif %}
                 </td>
                 <td>{{ total_price }}</td>
