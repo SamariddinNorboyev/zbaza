@@ -5,7 +5,7 @@ from users.models import MyUser
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     code = models.CharField(max_length=255, unique=True)
     amount = models.IntegerField()
     price = models.IntegerField(default=1000)

@@ -3,7 +3,6 @@
     <title>List</title>
     <style>
 
-
         .table-nav {
             width: 100%;
             display: flex;
@@ -335,6 +334,12 @@
                 confirm("Soni yoki Kodi tanlanmagan!");
                 return;
             }
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            document.body.style.height = "100vh";
+            document.body.style.overflow = "hidden";
             approve.style.display = 'block';
             blank.style.display = 'block';
 
@@ -348,6 +353,12 @@
         }
 
         function close_approve() {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+            document.body.style.height = "auto";
+            document.body.style.overflow = "auto";
             approve.style.display = 'none';
             blank.style.display = 'none';
         }
