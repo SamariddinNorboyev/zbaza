@@ -20,15 +20,44 @@ def home(request):
         amount = int(request.POST.get('amount'))
         product = Product.objects.filter(name=name, code=code).first()
         product.amount = product.amount - amount
+
+        if product.amount < 0:
+            messages.error(request, "E uka chichvording! Tovar tugaganku!.")
+            return redirect('products:home')
         action = Actions(by_user=request.user, product=product, amount=amount)
         action.save()
         product.save()
         print(product)
         return redirect('products:home')
-    products = Product.objects.all()
-    products_data = list(products.values('code', 'name'))
-    return render(request, 'products/home.html', {'products' :products, 'data': products_data, 'products_json': json.dumps(products_data)})
+    sort_by = request.GET.get('sort', '-updated_at')
 
+    allowed_sort_fields = [
+        'id', '-id',
+        'name', '-name',
+        'code', '-code',
+        'price', '-price',
+        'amount', '-amount',
+        'updated_at', '-updated_at'
+    ]
+
+    if sort_by not in allowed_sort_fields:
+        sort_by = '-updated_at'
+
+    product_list = Product.objects.all().order_by(sort_by)
+
+    products = Product.objects.all()
+
+    paginator = Paginator(product_list, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    products_data = list(products.values('code', 'name'))
+    return render(request, 'products/home.html', {
+        'page_obj': page_obj,
+        'products': products,
+        'data': products_data,
+        'products_json': json.dumps(products_data)
+    })
 
 
 @login_required
@@ -44,9 +73,35 @@ def add(request):
         product.save()
         print(product)
         return redirect('products:add')
+    sort_by = request.GET.get('sort', '-updated_at')
+
+    allowed_sort_fields = [
+        'id', '-id',
+        'name', '-name',
+        'code', '-code',
+        'price', '-price',
+        'amount', '-amount',
+        'updated_at', '-updated_at'
+    ]
+
+    if sort_by not in allowed_sort_fields:
+        sort_by = '-updated_at'
+
+    product_list = Product.objects.all().order_by(sort_by)
+
     products = Product.objects.all()
+
+    paginator = Paginator(product_list, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     products_data = list(products.values('code', 'name'))
-    return render(request, 'products/add.html', {'products' :products, 'data': products_data, 'products_json': json.dumps(products_data)})
+    return render(request, 'products/add.html', {
+        'page_obj': page_obj,
+        'products': products,
+        'data': products_data,
+        'products_json': json.dumps(products_data)
+    })
 
 
 
