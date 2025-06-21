@@ -1,5 +1,6 @@
 import json
 from argparse import Action
+from idlelib.rpc import request_queue
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator
@@ -24,7 +25,7 @@ def home(request):
         if product.amount < 0:
             messages.error(request, "E uka chichvording! Tovar tugaganku!.")
             return redirect('products:home')
-        action = Actions(by_user=request.user, product=product, amount=amount)
+        action = Actions(by_user=request.user, product=product, amount=f'-{amount}')
         action.save()
         product.save()
         print(product)
@@ -68,7 +69,7 @@ def add(request):
         amount = int(request.POST.get('amount'))
         product = Product.objects.filter(name=name, code=code).first()
         product.amount = product.amount + amount
-        action = Actions(by_user=request.user, product=product, amount=amount)
+        action = Actions(by_user=request.user, product=product, amount=f'+{amount}')
         action.save()
         product.save()
         print(product)
@@ -218,5 +219,21 @@ def export_products_excel(request):
         )
         response['Content-Disposition'] = 'attachment; filename=products.xlsx'
         return response
+
+    return redirect('products:home')
+
+
+@login_required
+def actions(request):
+    if request.user.is_superuser or hasattr(request.user, 'is_master') and request.user.is_master:
+        action_list = Actions.objects.select_related('by_user', 'product').order_by('-created')
+
+        paginator = Paginator(action_list, 10)  # Show 10 actions per page
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, 'products/actions.html', {
+            'actions': page_obj,
+        })
 
     return redirect('products:home')

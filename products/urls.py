@@ -9,5 +9,6 @@ urlpatterns = [
     path('delete/<int:id>/', views.delete, name='delete'),
     path('edit/<int:id>/', views.edit, name='edit'),
     path('products/', views.products, name='products'),
+    path('actions/', views.actions, name='actions_list'),
     path('export-excel/', views.export_products_excel, name='export_excel'),
 ]

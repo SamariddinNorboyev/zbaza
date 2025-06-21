@@ -90,7 +90,7 @@
     }
     </style>
 </head>
-<body id="body">
+<body id="body" class="bg-light">
     <header class="header d-flex flex-wrap align-items-center">
         <div class="d-flex flex-wrap">
             <a href="{% url 'products:home' %}" class="header_left">{% trans "Chiqim" %}</a>
@@ -101,6 +101,7 @@
                 <a href="{% url 'users:register' %}" class="header_left">{% trans "Yangi Hodim" %}</a>
                 <a href="{% url 'users:users' %}" class="header_left">{% trans "Hodimlar" %}</a>
                 <a href="{% url 'products:products' %}" class="header_left">{% trans "Tovarlar" %}</a>
+                <a href="{% url 'products:actions_list' %}" class="header_left">{% trans "Harakatlar" %}</a>
             {% endif %}
         </div>
         <div class="ms-auto">
